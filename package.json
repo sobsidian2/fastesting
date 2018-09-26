@@ -1,0 +1,33 @@
+{
+  "name": "fillaseat-functional",
+  "version": "1.1.0",
+  "description": "BST (basic sanity test) for fillaseat-functional web app using Protractor that makes use of page objects...",
+  "engines": {
+    "node": "8.12.0"
+  },
+  "scripts": {
+    "prepublish": "node_modules/.bin/webdriver-manager update",
+    "update": "node_modules/.bin/webdriver-manager update",
+    "test": "./flake conf.js"
+  },
+  "keywords": [
+    "protractor",
+    "page objects",
+    "tests",
+    "automation",
+    "webdriver"
+  ],
+  "dependencies": {
+    "protractor": "^5.4.1"
+  },
+  "devDependencies": {
+    "chance": "^0.7.5",
+    "jasmine-spec-reporter": "^4.2.1",
+    "jasmine-reporters": "^2.3.2",
+    "protractor-flake": "3.3.0",
+    "protractor-jasmine2-screenshot-reporter": "^0.5.0",
+    "protractor-angular-screenshot-reporter": "^0.1.2",
+    "protractor-beautiful-reporter": "^1.2.5",
+    "glob": "^7.1.3"
+  }
+}
