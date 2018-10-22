@@ -14,17 +14,36 @@ exports.config = {
 
     // specs: ['specs/*_spec.js'],
     specs: [
-        'specs/login_spec.js',
+        'specs/admin_login_spec.js',
+        'specs/admin_users_spec.js',
+        'specs/admin_events_spec.js',
+        'specs/admin_tools_spec.js',
+        'specs/client_login_spec.js',
+        'specs/client_login_spec.js',
+        'specs/client_events_spec.js',
+        'specs/client_my_account_spec.js',
     ],
 
     suites:{
-        login: 'specs/login_spec.js'
+        ClientLogin: 'specs/client_login_spec.js',
+        ClientEvents: 'specs/client_events_spec.js',
+        ClientMyAccount: 'specs/client_my_account_spec.js',
+        AdminLogin: 'specs/admin_login_spec.js',
+        AdminUsers: 'specs/admin_users_spec.js',
+        AdminEvents: 'specs/admin_events_spec.js',
+        AdminMassMail:'specs/admin_tools_spec.js'
     },
 
     baseUrl: 'https://www.fillaseatlasvegas.com/',  //test server baseURl
+    baseUrlAdmin: "https://secure2.fillaseat.com/lasvegas/a/dmin/",  //test server baseURl admin website
+
     params: {
         login: {
             username: 'demo@fillaseat.com',
+            password: 'demo1234'
+        },
+        loginAdmin: {
+            username: 'demoadmin@fillaseat.com',
             password: 'demo1234'
         }
     },
@@ -41,7 +60,11 @@ exports.config = {
             //displayStacktrace: 'spec'
         }));
 
-        jasmine.getEnv().addReporter(new SpecReporter());
+        jasmine.getEnv().addReporter(new SpecReporter({
+            spec:{
+                displayStacktrace:true
+            }
+        }));
         jasmine.getEnv().addReporter(new HtmlReporter({
             baseDirectory: './reports/screenshots',
             screenshotsSubfolder: 'images',
@@ -65,7 +88,7 @@ exports.config = {
                 '--disable-infobars',
                 '--disable-extensions',
                 '--disable-web-security',
-               // '--remote-debugging-port=9222',
+                // '--remote-debugging-port=9222',
                 '--ignore-ssl-errors=true',
                 'verbose',
                 'log-path=/tmp/chromedriver.log'
