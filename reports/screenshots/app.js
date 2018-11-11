@@ -1,6 +1,77 @@
 var app = angular.module('reportingApp', []);
 
-app.controller('ScreenshotReportController', function ($scope) {
+//<editor-fold desc="global helpers">
+
+var isValueAnArray = function (val) {
+    return Array.isArray(val);
+};
+
+var getSpec = function (str) {
+    var describes = str.split('|');
+    return describes[describes.length - 1];
+};
+var checkIfShouldDisplaySpecName = function (prevItem, item) {
+    if (!prevItem) {
+        item.displaySpecName = true;
+    } else if (getSpec(item.description) !== getSpec(prevItem.description)) {
+        item.displaySpecName = true;
+    }
+};
+
+var getParent = function (str) {
+    var arr = str.split('|');
+    str = "";
+    for (var i = arr.length - 2; i > 0; i--) {
+        str += arr[i] + " > ";
+    }
+    return str.slice(0, -3);
+};
+
+var getShortDescription = function (str) {
+    return str.split('|')[0];
+};
+
+var countLogMessages = function (item) {
+    if ((!item.logWarnings || !item.logErrors) && item.browserLogs && item.browserLogs.length > 0) {
+        item.logWarnings = 0;
+        item.logErrors = 0;
+        for (var logNumber = 0; logNumber < item.browserLogs.length; logNumber++) {
+            var logEntry = item.browserLogs[logNumber];
+            if (logEntry.level === 'SEVERE') {
+                item.logErrors++;
+            }
+            if (logEntry.level === 'WARNING') {
+                item.logWarnings++;
+            }
+        }
+    }
+};
+
+var defaultSortFunction = function sortFunction(a, b) {
+    if (a.sessionId < b.sessionId) {
+        return -1;
+    }
+    else if (a.sessionId > b.sessionId) {
+        return 1;
+    }
+
+    if (a.timestamp < b.timestamp) {
+        return -1;
+    }
+    else if (a.timestamp > b.timestamp) {
+        return 1;
+    }
+
+    return 0;
+};
+
+
+//</editor-fold>
+
+app.controller('ScreenshotReportController', function ($scope, $http) {
+    var that = this;
+    var clientDefaults = undefined;
+
     $scope.searchSettings = Object.assign({
         description: '',
         allselected: true,
@@ -8,9 +79,9 @@ app.controller('ScreenshotReportController', function ($scope) {
         failed: true,
         pending: true,
         withLog: true
-    }, {}); // enable customisation of search settings on first page hit
+    }, clientDefaults.searchSettings || {}); // enable customisation of search settings on first page hit
 
-    var initialColumnSettings = undefined; // enable customisation of visible columns on first page hit
+    var initialColumnSettings = clientDefaults.columnSettings; // enable customisation of visible columns on first page hit
     if (initialColumnSettings) {
         if (initialColumnSettings.displayTime !== undefined) {
             // initial settings have be inverted because the html bindings are inverted (e.g. !ctrl.displayTime)
@@ -27,12 +98,11 @@ app.controller('ScreenshotReportController', function ($scope) {
         }
         if (initialColumnSettings.inlineScreenshots !== undefined) {
             this.inlineScreenshots = initialColumnSettings.inlineScreenshots; // this setting does not have to be inverted
+        } else {
+            this.inlineScreenshots = false;
         }
-
     }
 
-
-    $scope.inlineScreenshots = false;
     this.showSmartStackTraceHighlight = true;
 
     this.chooseAllTypes = function () {
@@ -53,21 +123,15 @@ app.controller('ScreenshotReportController', function ($scope) {
     };
 
     this.getParent = function (str) {
-        var arr = str.split('|');
-        str = "";
-        for (var i = arr.length - 2; i > 0; i--) {
-            str += arr[i] + " > ";
-        }
-        return str.slice(0, -3);
+        return getParent(str);
     };
 
     this.getSpec = function (str) {
         return getSpec(str);
     };
 
-
     this.getShortDescription = function (str) {
-        return str.split('|')[0];
+        return getShortDescription(str);
     };
 
     this.convertTimestamp = function (timestamp) {
@@ -165,72 +229,95 @@ app.controller('ScreenshotReportController', function ($scope) {
         return true;
     };
 
-
     var results = [
     {
-        "description": "Login With Valid Credentials|Login Tests",
+        "description": "Login With Valid Credentials|Client Signup Tests",
         "passed": true,
         "pending": false,
         "os": "Windows NT",
-        "instanceId": 10460,
+        "instanceId": 4852,
         "browser": {
             "name": "chrome",
-            "version": "69.0.3497.100"
+            "version": "70.0.3538.77"
         },
         "message": "Passed.",
         "trace": "",
         "browserLogs": [
             {
                 "level": "WARNING",
-                "message": "https://www.fillaseatlasvegas.com/ 499 Mixed Content: The page at 'https://www.fillaseatlasvegas.com/' was loaded over HTTPS, but requested an insecure image 'http://www.iamjustina.com/wp-content/uploads/2017/07/CoverFINALJustina.jpg'. This content should also be served over HTTPS.",
-                "timestamp": 1537762101826,
+                "message": "https://www.fillaseatlasvegas.com/login2.php 336 Mixed Content: The page at 'https://www.fillaseatlasvegas.com/login2.php' was loaded over HTTPS, but requested an insecure image 'http://www.iamjustina.com/wp-content/uploads/2017/07/CoverFINALJustina.jpg'. This content should also be served over HTTPS.",
+                "timestamp": 1541923512570,
+                "type": ""
+            },
+            {
+                "level": "WARNING",
+                "message": "https://www.fillaseatlasvegas.com/join.php 523 Mixed Content: The page at 'https://www.fillaseatlasvegas.com/join.php' was loaded over HTTPS, but requested an insecure image 'http://www.iamjustina.com/wp-content/uploads/2017/07/CoverFINALJustina.jpg'. This content should also be served over HTTPS.",
+                "timestamp": 1541923515700,
                 "type": ""
             },
             {
                 "level": "SEVERE",
                 "message": "https://www.fillaseatlasvegas.com/assets_v5/js/jquery.min.cc.js 1:83687 Uncaught TypeError: r.getClientRects is not a function",
-                "timestamp": 1537762104304,
+                "timestamp": 1541923519648,
                 "type": ""
             },
             {
                 "level": "SEVERE",
                 "message": "https://www.fillaseatlasvegas.com/assets_v5/js/jquery.stellar.min.js 462:27 Uncaught TypeError: Cannot read property 'length' of undefined",
-                "timestamp": 1537762107149,
+                "timestamp": 1541923519665,
                 "type": ""
             },
             {
                 "level": "WARNING",
-                "message": "https://www.fillaseatlasvegas.com/login2.php 336 Mixed Content: The page at 'https://www.fillaseatlasvegas.com/login2.php' was loaded over HTTPS, but requested an insecure image 'http://www.iamjustina.com/wp-content/uploads/2017/07/CoverFINALJustina.jpg'. This content should also be served over HTTPS.",
-                "timestamp": 1537762109154,
+                "message": "https://secure2.fillaseat.com/lasvegas/join 701 Mixed Content: The page at 'https://secure2.fillaseat.com/lasvegas/join' was loaded over HTTPS, but requested an insecure image 'http://www.iamjustina.com/wp-content/uploads/2017/07/CoverFINALJustina.jpg'. This content should also be served over HTTPS.",
+                "timestamp": 1541923521562,
                 "type": ""
             },
             {
                 "level": "SEVERE",
-                "message": "https://static.fillaseat.com:8443/assets_v5/js/jquery.min.cc.js 1:83687 Uncaught TypeError: r.getClientRects is not a function",
-                "timestamp": 1537762110244,
+                "message": "https://secure2.fillaseat.com/images/HCC-logo.jpg - Failed to load resource: the server responded with a status of 404 ()",
+                "timestamp": 1541923521885,
+                "type": ""
+            },
+            {
+                "level": "WARNING",
+                "message": "https://secure2.fillaseat.com/lasvegas/join/2 514 Mixed Content: The page at 'https://secure2.fillaseat.com/lasvegas/join/2' was loaded over HTTPS, but requested an insecure image 'http://www.iamjustina.com/wp-content/uploads/2017/07/CoverFINALJustina.jpg'. This content should also be served over HTTPS.",
+                "timestamp": 1541923524805,
                 "type": ""
             },
             {
                 "level": "SEVERE",
-                "message": "https://static.fillaseat.com:8443/assets_v5/js/jquery.stellar.min.js 462:27 Uncaught TypeError: Cannot read property 'length' of undefined",
-                "timestamp": 1537762110309,
+                "message": "https://secure2.fillaseat.com/images/HCC-logo.jpg - Failed to load resource: the server responded with a status of 404 ()",
+                "timestamp": 1541923525157,
                 "type": ""
             },
             {
                 "level": "SEVERE",
-                "message": "https://static.fillaseat.com:8443/assets_v5/js/jquery.min.cc.js 1:83687 Uncaught TypeError: r.getClientRects is not a function",
-                "timestamp": 1537762114965,
+                "message": "https://secure2.fillaseat.com/images/HCC-logo.jpg - Failed to load resource: the server responded with a status of 404 ()",
+                "timestamp": 1541923527004,
+                "type": ""
+            },
+            {
+                "level": "WARNING",
+                "message": "https://secure2.fillaseat.com/lasvegas/join/3?pm=cc&sess=1f29f84f65cfb652afb1d8ca20a14082 445 Mixed Content: The page at 'https://secure2.fillaseat.com/lasvegas/join/3?pm=cc&sess=1f29f84f65cfb652afb1d8ca20a14082' was loaded over HTTPS, but requested an insecure image 'http://www.iamjustina.com/wp-content/uploads/2017/07/CoverFINALJustina.jpg'. This content should also be served over HTTPS.",
+                "timestamp": 1541923528245,
+                "type": ""
+            },
+            {
+                "level": "WARNING",
+                "message": "https://secure2.fillaseat.com/lasvegas/join/card_error?s=1f29f84f65cfb652afb1d8ca20a14082 449 Mixed Content: The page at 'https://secure2.fillaseat.com/lasvegas/join/card_error?s=1f29f84f65cfb652afb1d8ca20a14082' was loaded over HTTPS, but requested an insecure image 'http://www.iamjustina.com/wp-content/uploads/2017/07/CoverFINALJustina.jpg'. This content should also be served over HTTPS.",
+                "timestamp": 1541923530066,
                 "type": ""
             },
             {
                 "level": "SEVERE",
-                "message": "https://static.fillaseat.com:8443/assets_v5/js/jquery.stellar.min.js 462:27 Uncaught TypeError: Cannot read property 'length' of undefined",
-                "timestamp": 1537762119730,
+                "message": "https://secure2.fillaseat.com/images/HCC-logo.jpg - Failed to load resource: the server responded with a status of 404 ()",
+                "timestamp": 1541923530414,
                 "type": ""
             }
         ],
-        "timestamp": 1537762096160,
-        "duration": 23792
+        "timestamp": 1541923507243,
+        "duration": 23185
     }
 ];
 
@@ -244,38 +331,76 @@ app.controller('ScreenshotReportController', function ($scope) {
 });
     };
 
-    this.sortSpecs();
+    this.loadResultsViaAjax = function () {
+
+        $http({
+            url: './combined.json',
+            method: 'GET'
+        }).then(function (response) {
+                var data = null;
+                if (response && response.data) {
+                    if (typeof response.data === 'object') {
+                        data = response.data;
+                    } else if (response.data[0] === '"') { //detect super escaped file (from circular json)
+                        data = CircularJSON.parse(response.data); //the file is escaped in a weird way (with circular json)
+                    }
+                    else
+                    {
+                        data = JSON.parse(response.data);
+                    }
+                }
+                if (data) {
+                    results = data;
+                    that.sortSpecs();
+                }
+            },
+            function (error) {
+                console.error(error);
+            });
+    };
+
+
+    if (clientDefaults.useAjax) {
+        this.loadResultsViaAjax();
+    } else {
+        this.sortSpecs();
+    }
+
+
 });
 
 app.filter('bySearchSettings', function () {
     return function (items, searchSettings) {
         var filtered = [];
+        if (!items) {
+            return filtered; // to avoid crashing in where results might be empty
+        }
         var prevItem = null;
 
         for (var i = 0; i < items.length; i++) {
             var item = items[i];
             item.displaySpecName = false;
 
-            countLogMessages(item);
+            var isHit = false; //is set to true if any of the search criteria matched
+            countLogMessages(item); // modifies item contents
 
             var hasLog = searchSettings.withLog && item.browserLogs && item.browserLogs.length > 0;
             if (searchSettings.description === '' ||
                 (item.description && item.description.toLowerCase().indexOf(searchSettings.description.toLowerCase()) > -1)) {
 
                 if (searchSettings.passed && item.passed || hasLog) {
-                    checkIfShouldDisplaySpecName(prevItem, item);
-                    filtered.push(item);
-                    prevItem = item;
+                    isHit = true;
                 } else if (searchSettings.failed && !item.passed && !item.pending || hasLog) {
-                    checkIfShouldDisplaySpecName(prevItem, item);
-                    filtered.push(item);
-                    prevItem = item;
+                    isHit = true;
                 } else if (searchSettings.pending && item.pending || hasLog) {
-                    checkIfShouldDisplaySpecName(prevItem, item);
-                    filtered.push(item);
-                    prevItem = item;
+                    isHit = true;
                 }
+            }
+            if (isHit) {
+                checkIfShouldDisplaySpecName(prevItem, item);
 
+                filtered.push(item);
+                prevItem = item;
             }
         }
 
@@ -283,39 +408,3 @@ app.filter('bySearchSettings', function () {
     };
 });
 
-var isValueAnArray = function (val) {
-    return Array.isArray(val);
-};
-
-var checkIfShouldDisplaySpecName = function (prevItem, item) {
-    if (!prevItem) {
-        item.displaySpecName = true;
-        return;
-    }
-
-    if (getSpec(item.description) != getSpec(prevItem.description)) {
-        item.displaySpecName = true;
-        return;
-    }
-};
-
-var getSpec = function (str) {
-    var describes = str.split('|');
-    return describes[describes.length - 1];
-};
-
-var countLogMessages = function (item) {
-    if ((!item.logWarnings || !item.logErrors) && item.browserLogs && item.browserLogs.length > 0) {
-        item.logWarnings = 0;
-        item.logErrors = 0;
-        for (var logNumber = 0; logNumber < item.browserLogs.length; logNumber++) {
-            var logEntry = item.browserLogs[logNumber];
-            if (logEntry.level === 'SEVERE') {
-                item.logErrors++;
-            }
-            if (logEntry.level === 'WARNING') {
-                item.logWarnings++;
-            }
-        }
-    }
-};

@@ -1,5 +1,6 @@
 // browser.ignoreSynchronization = true;
 var basePage = require('./base_page.js');
+var path = require('path');
 
 var EditImagePage = function() {
 

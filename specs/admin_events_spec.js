@@ -44,7 +44,7 @@ describe ('Admin Events Tests', function() {
         expect(adminEventsDetailPage.isEventDetailPageTitleCorrect()).toBe(true, 'event detail page title not found');
         adminEventsDetailPage.clickEditEvent();
 
-        var updatedEvent = adminAddEventPage.addEvent(userData.updateEventData);
+        var updatedEvent = adminAddEventPage.editEvent(userData.updateEventData);
 
         adminEventsDetailPage.waitForEventDetailPage();
         expect(adminEventsDetailPage.isEventDetailPageTitleCorrect()).toBe(true, 'event detail page title not found');

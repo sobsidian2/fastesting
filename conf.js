@@ -31,7 +31,8 @@ exports.config = {
         AdminLogin: 'specs/admin_login_spec.js',
         AdminUsers: 'specs/admin_users_spec.js',
         AdminEvents: 'specs/admin_events_spec.js',
-        AdminMassMail:'specs/admin_tools_spec.js'
+        AdminMassMail:'specs/admin_tools_spec.js',
+        ClientSignUp:'specs/client_signup_spec.js'
     },
 
     baseUrl: 'https://www.fillaseatlasvegas.com/',  //test server baseURl

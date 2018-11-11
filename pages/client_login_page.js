@@ -21,11 +21,18 @@ var ClientLoginPage = function() {
         this.loginButton.click();
     };
 
+    this.clickSignup = function () {
+        basePage.waitForClickable(this.signUpButton);
+        console.log('click signup button');
+        this.signUpButton.click();
+    };
+
 };
 ClientLoginPage.prototype = Object.create({},{
     userInput: { get: function(){ return element(by.name('username'));}},
     passInput: { get: function(){ return element(by.name('password'));}},
     loginButton: { get: function(){ return element(by.buttonText('Login'));}},
+    signUpButton: { get: function(){ return element(by.linkText('Or Sign Up'));}},
 });
 // LoginPage.prototype = basePage; // extend basePage...
 module.exports = new ClientLoginPage();

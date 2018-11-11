@@ -192,16 +192,33 @@ var UserData = {
     viewEvent:{
         name:'Test Event'
     },
-    upgradeProcess:{
-        address:'',
-        city:'',
-        state:'',
-        zip:'',
-        creditCardName:'',
-        creditCardNumber:'',
-        ccv:'',
+    billingInfo:{
+        address:'Test',
+        city:'Nevada',
+        state:'Nevada',
+        zip:'22222',
+        creditCardName:'4111111111111111',
+        creditCardNumber:'4111111111111111',
+        ccv:'123',
         expiryMonth:'',
         expiryYear:''
-    }
+    },
+
+    joinPersonalInfo:{
+        firstName: 'Test',
+        lastName: 'User',
+        email: 'user1@sandbox.fillaseat.com',
+        password:'123456',
+        homePhone: '5673334444',
+        cellPhone:'5553334444',
+        dob:{
+            day:'15',
+            month:'11',
+            year:'1990'
+        },
+        hearUs:'Facebook',
+    },
+
+
 };
 module.exports = UserData;

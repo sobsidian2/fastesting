@@ -15,7 +15,7 @@ describe ('Client My Accounts Tests', function() {
 
     it('Renew Upgrade Process', function() {
         clientHomePage.navigateToMyAccount();
-        clientAccountPage.renewUpgradeProcess(userData.upgradeProcess);
+        clientAccountPage.renewUpgradeProcess(userData.billingInfo);
 
         browser.sleep(30000);
     });

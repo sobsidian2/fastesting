@@ -87,6 +87,102 @@ var AddEventPage = function() {
         this.contactPhone3Field.clear();
         this.contactPhone3Field.sendKeys(eventObj.contactPhone.phone3);
 
+        console.log('upload event image');
+        var fileToUpload = eventObj.imagePath;
+        var absolutePath = path.resolve(__dirname, fileToUpload);
+        this.uploadImage.sendKeys(absolutePath);
+
+        console.log('enter event youtube url: '+eventObj.youtubeUrl);
+        this.youtubeUrlField.clear();
+        this.youtubeUrlField.sendKeys(eventObj.youtubeUrl);
+
+        this.saveButton.click();
+        return eventObj;
+    };
+
+    this.editEvent = function (eventObj) {
+        eventObj.name = eventObj.name+basePage.randomText(10);
+        console.log('enter event name: '+eventObj.name);
+        this.nameField.clear();
+        this.nameField.sendKeys(eventObj.name);
+
+        console.log('enter event description: '+eventObj.description);
+        this.descriptionField.clear();
+        this.descriptionField.sendKeys(eventObj.description);
+
+        console.log('enter event additional info: '+eventObj.additionalInfo);
+        this.addInfoField.clear();
+        this.addInfoField.sendKeys(eventObj.additionalInfo);
+
+        console.log('enter event age restriction: '+eventObj.ageRestriction);
+        this.ageRestrictionField.clear();
+        this.ageRestrictionField.sendKeys(eventObj.ageRestriction);
+
+        console.log('enter event dress code: '+eventObj.dressCode);
+        this.dressCodeField.clear();
+        this.dressCodeField.sendKeys(eventObj.dressCode);
+
+        console.log('enter event price: '+eventObj.price);
+        this.priceField.clear();
+        this.priceField.sendKeys(eventObj.price);
+
+        console.log('set is event active: '+eventObj.isActive);
+        this.isActive.get(eventObj.isActive).click();
+
+        console.log('set is event free: '+eventObj.isActive);
+        this.isFreeShow.get(eventObj.freeShow).click();
+
+        console.log('enter event ticket value: '+eventObj.ticketValue);
+        this.ticketValueField.clear();
+        this.ticketValueField.sendKeys(eventObj.ticketValue);
+
+        console.log('enter event show limit: '+eventObj.showLimit);
+        this.showLimitField.clear();
+        this.showLimitField.sendKeys(eventObj.showLimit);
+
+        console.log('set show limit to be displayed or not');
+        this.showLimitDisplay.click();
+
+        console.log('enter event max reservation limit: '+eventObj.maxReservationLimit);
+        this.maxReservationLimitField.clear();
+        this.maxReservationLimitField.sendKeys(eventObj.maxReservationLimit);
+
+        // console.log('set notify zero attention');
+        // this.notifyZeroAttendance.click();
+
+        // console.log('set disable reservation');
+        // this.disableReservations.click();
+
+        console.log('enter event venue: '+eventObj.venue);
+        this.venueField.clear();
+        this.venueField.sendKeys(eventObj.venue);
+
+        console.log('enter event venue address: '+eventObj.venueAddress);
+        this.venueAddressField.clear();
+        this.venueAddressField.sendKeys(eventObj.venueAddress);
+
+        console.log('enter event url: '+eventObj.venueUrl);
+        this.venueUrlField.clear();
+        this.venueUrlField.sendKeys(eventObj.venueUrl);
+
+        console.log('enter event venue email: '+eventObj.venueEmail);
+        this.venueEmailField.clear();
+        this.venueEmailField.sendKeys(eventObj.venueEmail);
+
+        console.log('enter event contact name: '+eventObj.contactName);
+        this.contactNameField.clear();
+        this.contactNameField.sendKeys(eventObj.contactName);
+
+        console.log('enter event contact phone: '+eventObj.contactPhone.phone1+eventObj.contactPhone.phone2+eventObj.contactPhone.phone3);
+        this.contactPhone1Field.clear();
+        this.contactPhone1Field.sendKeys(eventObj.contactPhone.phone1);
+
+        this.contactPhone2Field.clear();
+        this.contactPhone2Field.sendKeys(eventObj.contactPhone.phone2);
+
+        this.contactPhone3Field.clear();
+        this.contactPhone3Field.sendKeys(eventObj.contactPhone.phone3);
+
         // console.log('upload event image');
         // var fileToUpload = eventObj.imagePath;
         // var absolutePath = path.resolve(__dirname, fileToUpload);
