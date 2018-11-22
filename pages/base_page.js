@@ -36,17 +36,17 @@ BasePage = function () {
 
     this.waitForVisible = function (locator) {
         var visible = EC.visibilityOf(locator);
-        browser.wait(visible(locator), 3000, 'element not visible')
+        browser.wait(visible(locator), 9000, 'element not visible')
     };
 
     this.waitForPresent = function (locator) {
         var present = EC.presenceOf(locator);
-        browser.wait(present(locator), 3000, 'element not present')
+        browser.wait(present(locator), 9000, 'element not present')
     };
 
     this.waitForClickable = function (locator) {
         var clickable = EC.elementToBeClickable(locator);
-        browser.wait(clickable(locator), 3000, 'element not clickable')
+        browser.wait(clickable(locator), 9000, 'element not clickable')
     };
     this.waitForNotVisible = function (locator) {
         var stale = EC.stalenessOf(locator);

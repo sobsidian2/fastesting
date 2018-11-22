@@ -186,6 +186,20 @@ var UserData = {
         to: 'All Active Members',
         subject:'test mass email',
         alertEmail:'sqaprofessional1@gmail.com',
+        questions:{
+            school:'Where did you go to Elementary School?',
+            pet:'What was the name of your first pet?',
+            love:'Who was your first love?',
+            movie:'What is your favorite movie?',
+            auto:'Make of first automobile?'
+        },
+        answers:{
+            school:'hearst',
+            pet:'muffin',
+            love:'sharin',
+            movie:'star wars',
+            auto:'bronco'
+        }
     },
 
     //CLIENT RELATED TEST DATA
